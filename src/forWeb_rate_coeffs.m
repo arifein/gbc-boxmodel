@@ -31,7 +31,9 @@
 %      from a new global model, J. Geophys. Res.-Biogeosci., 115, G03008.
 %   Soerensen, A. L., et al. (2010), An improved global model for air-sea 
 %      exchange of mercury: High concentrations over the north atlantic, 
-%      Environ. Sci. Technol., 44(22), 8574-8580.   
+%      Environ. Sci. Technol., 44(22), 8574-8580.  
+%   Zhang, Y., et al. (2014), Six centuries of changing oceanic mercury, 
+%      Global Biogeochem. Cycles., 28(11), 1251–1261.   
 %
 % MODIFCATION HISTORY
 %   05 Jun 2011 - EMS - last dated modification
@@ -63,7 +65,7 @@
 Ratm       = 5000;               % Holmes et al.(2010)
 
 % Ocean
-Rocs       = 2910;               % Soerensen et al. (2010)
+Rocs       = 2407;               % Zhang et al. (2014)
 Roci       = 134000;             % Sunderland and Mason (2007)
 Rocd       = 220649;             % Sunderland and Mason (2007)
 
@@ -80,14 +82,14 @@ Rm         = 3e11;               % Deep reservoirs (Selin et al. 2008)
 %--------------------------------------------------------------------------
 
 % Atmosphere
-Dep_oHgII  = 3600;%3900;      % Hg(II) deposition to the ocean (Holmes et al., 2010), corrected from 3900 to 3600 Mg/yr by HMA 19 Mar 2014
-Dep_tHgII  = 1500;            % Hg(II) deposition to land (Holmes et al., 2010)
-Dep_tHg0   = 1500;            % Hg(0) deposition to land  (Holmes et al., 2010)
+Dep_oHgII  = 3420;%3900;      % Hg(II) deposition to the ocean (GEOS-Chem-Hg v12.8.1, f0 = 0)
+Dep_tHgII  = 1042;            % Hg(II) deposition to land (GEOS-Chem-Hg v12.8.1, f0 = 0)
+Dep_tHg0   = 1192;            % Hg(0) deposition to land  (GEOS-Chem-Hg v12.8.1, f0 = 0)
                               
 % Hg0 air - sea exchange
-netEv_Hg0  = 3000;            % net evasion from surface ocean to atmosphere (Soerensen et al., 2010)
-Ev_Hg0_ocs = 4700;            % gross ocean evasion to the atmosphere (Soerensen et al., 2010)
-Upt_oHg0   = Ev_Hg0_ocs - netEv_Hg0; % gross uptake of Hg0 from the atmopshere (1700 Mg/yr from Holmes et al., 2010)
+Ev_Hg0_ocs = 5126; % gross ocean evasion to the atmosphere (GEOS-Chem-Hg v12.8.1, f0 = 0)
+Upt_oHg0   = 1917; % gross uptake of Hg0 from the atmopshere (GEOS-Chem-Hg v12.8.1, f0 = 0)
+netEv_Hg0  = Ev_Hg0_ocs - Upt_oHg0; % net evasion from surface ocean to atmosphere (GEOS-Chem-Hg v12.8.1, f0 = 0)
 
 % Surface ocean
 ps_ocs     = 3320;            % particle settling 
