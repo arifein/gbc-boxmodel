@@ -62,7 +62,7 @@
 %--------------------------------------------------------------------------
 
 % Atmosphere
-Ratm       = 5000;               % Holmes et al.(2010)
+Ratm       = 4469;               % (GEOS-Chem-Hg v12.8.1, f0 = 0)
 
 % Ocean
 Rocs       = 2407;               % Zhang et al. (2014)
@@ -82,7 +82,8 @@ Rm         = 3e11;               % Deep reservoirs (Selin et al. 2008)
 %--------------------------------------------------------------------------
 
 % Atmosphere
-Dep_oHgII  = 3420;%3900;      % Hg(II) deposition to the ocean (GEOS-Chem-Hg v12.8.1, f0 = 0)
+% NEED TO ADD SEA SALT LOSS TO HG(II) DEPOSITION - NOTE
+Dep_oHgII  = 4849;%3900;      % Hg(II) deposition to the ocean (GEOS-Chem-Hg v12.8.1, f0 = 0)
 Dep_tHgII  = 1042;            % Hg(II) deposition to land (GEOS-Chem-Hg v12.8.1, f0 = 0)
 Dep_tHg0   = 1192;            % Hg(0) deposition to land  (GEOS-Chem-Hg v12.8.1, f0 = 0)
                               
