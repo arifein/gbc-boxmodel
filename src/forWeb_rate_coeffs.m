@@ -62,7 +62,7 @@
 %--------------------------------------------------------------------------
 
 % Atmosphere
-Ratm       = 3322;               % (GEOS-Chem-Hg v12.8.1, f0 = 0.1)
+Ratm       = 4366;               % Feinberg et al. (2022)
 
 % Ocean
 Rocs       = 2407;               % Zhang et al. (2014)
@@ -83,14 +83,14 @@ Rm         = 3e11;               % Deep reservoirs (Selin et al. 2008)
 
 % Atmosphere
 % NEED TO ADD SEA SALT LOSS TO HG(II) DEPOSITION - NOTE
-Dep_oHgII  = 3624;%3900;      % Hg(II) deposition to the ocean (GEOS-Chem-Hg v12.8.1, f0 = 0.1)
-Dep_tHgII  = 789;            % Hg(II) deposition to land (GEOS-Chem-Hg v12.8.1, f0 = 0.1)
-Dep_tHg0   = 3151;            % Hg(0) deposition to land  (GEOS-Chem-Hg v12.8.1, f0 = 0.1)
+Dep_oHgII  = 3986;      % Hg(II) deposition to the ocean (Feinberg et al. 2022)
+Dep_tHgII  = 790;            % Hg(II) deposition to land (Feinberg et al. 2022)
+Dep_tHg0   = 2170;            % Hg(0) deposition to land  (Feinberg et al. 2022)
                               
 % Hg0 air - sea exchange
-Ev_Hg0_ocs = 5165; % gross ocean evasion to the atmosphere (GEOS-Chem-Hg v12.8.1, f0 = 0.1)
-Upt_oHg0   = 1540; % gross uptake of Hg0 from the atmopshere (GEOS-Chem-Hg v12.8.1, f0 = 0.1)
-netEv_Hg0  = Ev_Hg0_ocs - Upt_oHg0; % net evasion from surface ocean to atmosphere (GEOS-Chem-Hg v12.8.1, f0 = 0.1)
+Ev_Hg0_ocs = 5165; % gross ocean evasion to the atmosphere (Feinberg et al. 2022)
+Upt_oHg0   = 1961; % gross uptake of Hg0 from the atmopshere (Feinberg et al. 2022)
+netEv_Hg0  = Ev_Hg0_ocs - Upt_oHg0; % net evasion from surface ocean to atmosphere (Feinberg et al. 2022)
 
 % Surface ocean
 ps_ocs     = 3320;            % particle settling 
