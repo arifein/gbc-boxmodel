@@ -1,2 +1,5 @@
 ._*.m
 *.asv
+.DS_Store
+._.DS_Store
+figs/
