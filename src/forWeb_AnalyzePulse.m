@@ -35,16 +35,18 @@ pulse_diff =  M_pulse(:,:) - M_steady(:,:); % diff pulse for each reservoir
 % 1) plot the burden spike and disappearance from atmosphere, ocean, and quick land
 figure
 indx_pulse = find(round(t,1) == pulse_time-1);
+indx_pulse_end = find(round(t,1) == pulse_time+100.8); % arbitrary start date
+
 set(gca, 'FontSize',13)
 hold on
-plot (t(indx_pulse:end), pulse_diff(1,indx_pulse:end), 'k', 'linewidth', 2.5)
+plot (t(indx_pulse:indx_pulse_end), pulse_diff(1,indx_pulse:indx_pulse_end), 'k', 'linewidth', 2.5)
 title ('Surface Hg Reservoirs - Pulse')
-plot (t(indx_pulse:end), pulse_diff(2,indx_pulse:end),'linestyle','-.', 'linewidth',2.5,'Color',[0.7 0.7 0.7])
-plot (t(indx_pulse:end), pulse_diff(5,indx_pulse:end),'linestyle','--','linewidth',2.5,'color',[0.4 0.4 0.4])
+plot (t(indx_pulse:indx_pulse_end), pulse_diff(2,indx_pulse:indx_pulse_end),'linestyle','-.', 'linewidth',2.5,'Color',[0.7 0.7 0.7])
+plot (t(indx_pulse:indx_pulse_end), pulse_diff(5,indx_pulse:indx_pulse_end),'linestyle','--','linewidth',2.5,'color',[0.4 0.4 0.4])
 legend ('atmosphere', 'fast terrestrial', 'surface ocean', 'Location', 'NorthEast')
 xlabel('Time (years)')
 ylabel('Mg of Hg')
-xlim([t(indx_pulse) t(end)])
+xlim([t(indx_pulse) t(indx_pulse_end)])
 hold off
 %%
 % 2) plot and calculate EAMD using 2-term exponential, try 2 ways
@@ -56,8 +58,10 @@ deposition_diff = pulse_diff(1,:) * (k_A_oHgII + k_A_oHg0 + k_A_tHgII + k_A_tHg0
 t_pulse = t - (pulse_time + 0.5);
 % take data starting in year following pulse for making fit
 indx_fit_start = find(round(t,1) == pulse_time + 1 );
-dep_diff_fit = deposition_diff(indx_fit_start:end) / pulse_size; % normalize by pulse size
-t_fit = t_pulse(indx_fit_start:end);
+indx_fit_end = find(round(t,1) == pulse_time + 100.8 );
+
+dep_diff_fit = deposition_diff(indx_fit_start:indx_fit_end) / pulse_size; % normalize by pulse size
+t_fit = t_pulse(indx_fit_start:indx_fit_end);
 
 % selin version of equation
 fo = fitoptions('Method','NonlinearLeastSquares','Lower', [0, -Inf, 0, -Inf], 'Upper', [Inf, 0, Inf, 0]);
@@ -98,7 +102,7 @@ figure('Position', [100 100 1400 500])
 subplot(1,3,1)
 set(gca, 'FontSize',15)
 hold on
-plot (t(indx_pulse:end), deposition_diff(1,indx_pulse:end), 'k', 'linewidth', 3)
+plot (t(indx_pulse:indx_pulse_end), deposition_diff(1,indx_pulse:indx_pulse_end), 'k', 'linewidth', 3)
 plot(t_plot_pulse,yfit1,'o','Color',c1, 'MarkerFaceColor',c1)
 plot(t_plot_pulse,yfit2,'o','Color',c2, 'MarkerFaceColor',c2)
 plot(t_plot_pulse,yfit3,'o','Color',c3, 'MarkerFaceColor',c3)
@@ -111,13 +115,13 @@ text(0.15, 0.78, streq1, 'Color',c1, 'Fontsize',15, 'Units','Normalized')
 text(0.15, 0.72, strfit1, 'Color',c1, 'Fontsize',15, 'Units','Normalized')
 text(0.15, 0.64, streq3, 'Color',c3, 'Fontsize',15, 'Units','Normalized')
 text(0.15, 0.58, strfit3, 'Color',c3, 'Fontsize',15, 'Units','Normalized')
-xlim([t(indx_pulse) t(end)])
+xlim([t(indx_pulse) t(indx_pulse_end)])
 hold off
 % same plot, just zoomed in to the beginning
 subplot(1,3,2)
 set(gca, 'FontSize',15)
 hold on
-plot (t(indx_pulse:end), deposition_diff(1,indx_pulse:end), 'k', 'linewidth', 3)
+plot (t(indx_pulse:indx_pulse_end), deposition_diff(1,indx_pulse:indx_pulse_end), 'k', 'linewidth', 3)
 plot(t_plot_pulse,yfit1,'o','Color',c1, 'MarkerFaceColor',c1)
 plot(t_plot_pulse,yfit2,'o','Color',c2, 'MarkerFaceColor',c2)
 plot(t_plot_pulse,yfit3,'o','Color',c3, 'MarkerFaceColor',c3)
@@ -131,14 +135,14 @@ hold off
 subplot(1,3,3)
 set(gca, 'FontSize',15)
 hold on
-plot (t(indx_pulse:end), deposition_diff(1,indx_pulse:end),  'linewidth', 3)
+plot (t(indx_pulse:indx_pulse_end), deposition_diff(1,indx_pulse:indx_pulse_end),  'linewidth', 3)
 plot(t_plot_pulse,yfit1,'o','Color',c1, 'MarkerFaceColor',c1)
 plot(t_plot_pulse,yfit2,'o','Color',c2, 'MarkerFaceColor',c2)
 plot(t_plot_pulse,yfit3,'o','Color',c3, 'MarkerFaceColor',c3)
 title ('Deposition from pulse (zoom end)')
 xlabel('Time (years)')
 ylabel('Mg yr^{-1}')
-xlim([t(end)-30 t(end)])
+xlim([t(indx_pulse_end)-31 t(indx_pulse_end)])
 hold off
 %%
 % 3) plot and calculate EAME using double exponential, single exponential
@@ -150,7 +154,7 @@ emiss_diff = pulse_diff(2,:) * (k_Te_rf + k_Te_p + k_Te_BBf) + ... % fast ter
 emiss_diff_o = pulse_diff(5,:) * (k_Oc_ev); % ocean contribution
 emiss_diff_l = emiss_diff - emiss_diff_o; % land contribution
 % take data starting in year following pulse for making fit
-emiss_diff_fit = emiss_diff(indx_fit_start:end) / pulse_size; % normalize by pulse size
+emiss_diff_fit = emiss_diff(indx_fit_start:indx_fit_end) / pulse_size; % normalize by pulse size
 
 % exp1 version of equation
 fo = fitoptions('Method','NonlinearLeastSquares','Lower', [0, -Inf], 'Upper', [Inf, 0]);
@@ -194,10 +198,10 @@ figure('Position', [100 100 1400 500])
 subplot(1,3,1)
 set(gca, 'FontSize',15)
 hold on
-plot (t(indx_pulse:end), emiss_diff(1,indx_pulse:end), 'k', 'linewidth', 3)
-plot (t(indx_pulse:end), emiss_diff_o(1,indx_pulse:end), 'Color', ...
+plot (t(indx_pulse:indx_pulse_end), emiss_diff(1,indx_pulse:indx_pulse_end), 'k', 'linewidth', 3)
+plot (t(indx_pulse:indx_pulse_end), emiss_diff_o(1,indx_pulse:indx_pulse_end), 'Color', ...
     c_o, 'linewidth', 2)
-plot (t(indx_pulse:end), emiss_diff_l(1,indx_pulse:end), 'Color', ...
+plot (t(indx_pulse:indx_pulse_end), emiss_diff_l(1,indx_pulse:indx_pulse_end), 'Color', ...
     c_t, 'linewidth', 2)
 plot(t_plot_pulse,yfit_e2,'o','Color',c3, 'MarkerFaceColor',c3)
 
@@ -210,15 +214,15 @@ ylabel('Mg yr^{-1}')
 % add text for labels
 text(0.15, 0.78, streq_e2, 'Color',c3, 'Fontsize',15, 'Units','Normalized')
 text(0.15, 0.72, strfit_e2, 'Color',c3, 'Fontsize',15, 'Units','Normalized')
-xlim([t(indx_pulse) t(end)])
+xlim([t(indx_pulse) t(indx_pulse_end)])
 hold off
 subplot(1,3,2)
 set(gca, 'FontSize',15)
 hold on
-plot (t(indx_pulse:end), emiss_diff(1,indx_pulse:end), 'k', 'linewidth', 3)
-plot (t(indx_pulse:end), emiss_diff_o(1,indx_pulse:end), 'Color', ...
+plot (t(indx_pulse:indx_pulse_end), emiss_diff(1,indx_pulse:indx_pulse_end), 'k', 'linewidth', 3)
+plot (t(indx_pulse:indx_pulse_end), emiss_diff_o(1,indx_pulse:indx_pulse_end), 'Color', ...
     c_o, 'linewidth', 2)
-plot (t(indx_pulse:end), emiss_diff_l(1,indx_pulse:end), 'Color', ...
+plot (t(indx_pulse:indx_pulse_end), emiss_diff_l(1,indx_pulse:indx_pulse_end), 'Color', ...
     c_t, 'linewidth', 2)
 plot(t_plot_pulse,yfit_e2,'o','Color',c3, 'MarkerFaceColor',c3)
 
@@ -232,10 +236,10 @@ hold off
 subplot(1,3,3)
 set(gca, 'FontSize',15)
 hold on
-plot (t(indx_pulse:end), emiss_diff(1,indx_pulse:end), 'k', 'linewidth', 3)
-plot (t(indx_pulse:end), emiss_diff_o(1,indx_pulse:end), 'Color', ...
+plot (t(indx_pulse:indx_pulse_end), emiss_diff(1,indx_pulse:indx_pulse_end), 'k', 'linewidth', 3)
+plot (t(indx_pulse:indx_pulse_end), emiss_diff_o(1,indx_pulse:indx_pulse_end), 'Color', ...
     c_o, 'linewidth', 2)
-plot (t(indx_pulse:end), emiss_diff_l(1,indx_pulse:end), 'Color', ...
+plot (t(indx_pulse:indx_pulse_end), emiss_diff_l(1,indx_pulse:indx_pulse_end), 'Color', ...
     c_t, 'linewidth', 2)
 plot(t_plot_pulse,yfit_e2,'o','Color',c3, 'MarkerFaceColor',c3)
 
@@ -243,7 +247,7 @@ title ('Legacy emissions from pulse (zoom end)')
 xlabel('Time (years)')
 ylabel('Mg yr^{-1}')
 % add text for labels
-xlim([t(end)-30 t(end)])
+xlim([t(indx_pulse_end)-31 t(indx_pulse_end)])
 hold off
 
 disp(fit_e2)

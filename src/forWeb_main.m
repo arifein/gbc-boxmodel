@@ -69,7 +69,7 @@ clear all; close all;
 %--------------------------------------------------------------------------
 
 % Display plots? 
-Lplot      = 0;         % 1 = yes {DEFAULT}
+Lplot      = 1;         % 1 = yes {DEFAULT}
                         % 0 = no (faster, can be helpful for debugging) 
 
 % Print output to command window
@@ -143,7 +143,6 @@ scenario    = 'mid';     % 'mid'  = Streets' central estimate {DEFAULT}
 %Lplot = 1;             
 if (strcmp(emissInven, 'Pulse'))
     % Calculate pulse or steady emissions scenario (Mg/yr)
-    disp('0')
     forWeb_PulseEmiss
     
     % Run steady scenario
