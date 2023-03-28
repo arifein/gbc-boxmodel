@@ -69,11 +69,11 @@ clear all; close all;
 %--------------------------------------------------------------------------
 
 % Display plots? 
-Lplot      = 1;         % 1 = yes {DEFAULT}
+Lplot      = 0;         % 1 = yes {DEFAULT}
                         % 0 = no (faster, can be helpful for debugging) 
 
 % Print output to command window
-Ldisp      = 1;         % 1 = yes {DEFAULT}
+Ldisp      = 0;         % 1 = yes {DEFAULT}
                         % 0 = no                   
              
 %--------------------------------------------------------------------------
@@ -116,7 +116,7 @@ forWeb_RunPreAnthro
 %--------------------------------------------------------------------------
 
 % Select a historial emission inventory
-emissInven = 'Horowitz'; % 'Horowitz'  = Horowitz et al. (2014), which is 
+emissInven = 'Pulse'; % 'Horowitz'  = Horowitz et al. (2014), which is 
                          %               basically Streets et al. (2011) 
                          %               plus additional emissions from 
                          %               commercial Hg use. {DEFAULT}
@@ -140,12 +140,32 @@ future      = 'none';    % 'none' = stop at 2008 {DEFAULT}
 scenario    = 'mid';     % 'mid'  = Streets' central estimate {DEFAULT}
                          % 'low'  = Streets' lower 80% confidence interval
                          % 'high' = Streets' upper 80% confidence interval
-                 
+%Lplot = 1;             
+if (strcmp(emissInven, 'Pulse'))
+    % Calculate pulse or steady emissions scenario (Mg/yr)
+    disp('0')
+    forWeb_PulseEmiss
+    
+    % Run steady scenario
+    Anthro = Anthro_steady;
+    % figure counter
+    ff = 0;
+    forWeb_RunPulse
+    M_steady = M; % save reservoirs
 
-% Historical anthropogenic emissions (Mg/yr) 
-forWeb_AnthroEmiss   
-                     
-% Run with all-time anthropogenic emissions                     
-forWeb_RunAnthro
+    % Run pulse scenario    
+    Anthro = Anthro_pulse;
+    forWeb_RunPulse
+    M_pulse = M; % save reservoirs
+    
+    % Analyze pulse for EAMD/EAME equations
+    forWeb_AnalyzePulse
+else
+    % Historical anthropogenic emissions (Mg/yr) 
+    forWeb_AnthroEmiss   
 
-
+    % Run with all-time anthropogenic emissions                     
+    forWeb_RunAnthro
+end
+% IS IT DIFFERENT A PULSE IN PRE-INDUSTRIAL VS. CURRENT DAY? IS OCEAN A NET
+% SINK OF HG0 IN PREINDUSTRIAL AND A SOURCE NOW?
