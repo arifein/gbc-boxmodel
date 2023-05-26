@@ -69,7 +69,7 @@ clear all; close all;
 %--------------------------------------------------------------------------
 
 % Display plots? 
-Lplot      = 1;         % 1 = yes {DEFAULT}
+Lplot      = 0;         % 1 = yes {DEFAULT}
                         % 0 = no (faster, can be helpful for debugging) 
 
 % Print output to command window

@@ -77,7 +77,13 @@ for i = n:n + m
 end
 % generate pulse of X Mg/yr in specific year
 pulse_idx = n+1; % index of time where want to input pulse - 2010
-%pulse_idx = 3501; % index of time where want to input pulse - 1500
+% pulse_idx = 3501; % index of time where want to input pulse - 1500
+% pulse_idx = 3751; % index of time where want to input pulse - 1750
+% pulse_idx = 3901; % index of time where want to input pulse - 1900
+% pulse_idx = 3971; % index of time where want to input pulse - 1970
+% pulse_idx = 3996; % index of time where want to input pulse - 1995
+%pulse_idx = 3849; % index of time where want to input pulse - 1848
+
 pulse_time = FTime(pulse_idx); % what year is this actually
 pulse_size = 100; % how big is pulse in Mg/yr, results are independent
 Anthro_pulse(pulse_idx) = Anthro_pulse(pulse_idx) + pulse_size; % implement pulse
