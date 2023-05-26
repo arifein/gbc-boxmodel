@@ -23,7 +23,16 @@
 % Helen M. Amos, hamos@hsph.harvard.edu
 %==========================================================================
 
-pulse_diff =  M_pulse(:,:) - M_steady(:,:); % diff pulse for each reservoir
+% set pulse size equal to sum of river and atmospheric pulse (one should be
+% zero
+pulse_size_T = pulse_size + river_pulse;
+disp('River pulse is ')
+disp(river_pulse)
+disp('Atmos pulse is ')
+disp(pulse_size)
+
+% calculate differences in each reservoir after pulse
+pulse_diff =  M_pulse(:,:) - M_steady(:,:); 
 % Matm = M(1,:); % atmosphere
 % Mtf  = M(2,:); % fast soil pool
 % Mts  = M(3,:); % slow soil pool
@@ -58,9 +67,12 @@ deposition_diff = pulse_diff(1,:) * (k_A_oHgII + k_A_oHg0 + k_A_tHgII + k_A_tHg0
 t_pulse = t - (pulse_time + 0.5);
 % take data starting in year following pulse for making fit
 indx_fit_start = find(round(t,1) == pulse_time + 1 );
+if (pulse_size == 0) % only have a river pulse, no  atmos pulse
+    indx_fit_start = find(round(t,1) == pulse_time + 1.6 ); % ignore first 1.5 year where have jagged response
+end
 indx_fit_end = find(round(t,1) == pulse_time + 100.8 );
 
-dep_diff_fit = deposition_diff(indx_fit_start:indx_fit_end) / pulse_size; % normalize by pulse size
+dep_diff_fit = deposition_diff(indx_fit_start:indx_fit_end) / pulse_size_T; % normalize by pulse size
 t_fit = t_pulse(indx_fit_start:indx_fit_end);
 
 % selin version of equation
@@ -70,7 +82,7 @@ ft1 = fittype("a*exp(b*x) + c*(1-exp(d*x))", 'options', fo);
 coeffs1 = coeffvalues(fit1);
 % calculate annual values from fit, accounting for pulse size
 annual_t = 0.5:100.5;
-yfit1 = pulse_size * (coeffs1(1) * exp(coeffs1(2) * annual_t) + coeffs1(3) * (1 - exp(coeffs1(4) * annual_t))); 
+yfit1 = pulse_size_T * (coeffs1(1) * exp(coeffs1(2) * annual_t) + coeffs1(3) * (1 - exp(coeffs1(4) * annual_t))); 
 t_plot_pulse = annual_t + pulse_time + 0.5;% after calculation, shift time so can plot it
 strfit1 = "fit v1: R^2 = " + sprintf('%0.3f',gof1.rsquare);
 streq1 = sprintf('%0.2f',coeffs1(1)) + "exp(" + sprintf('%0.2f',coeffs1(2)) ...
@@ -78,14 +90,14 @@ streq1 = sprintf('%0.2f',coeffs1(1)) + "exp(" + sprintf('%0.2f',coeffs1(2)) ...
     sprintf('%0.2f',coeffs1(4)) + "t))";
 
 % selin 2018 coefficients
-yfit2 = pulse_size * (0.68 * exp(-0.43 * annual_t) + 0.008 * (1 - exp(-1.3 * annual_t))); 
+yfit2 = pulse_size_T * (0.68 * exp(-0.43 * annual_t) + 0.008 * (1 - exp(-1.3 * annual_t))); 
 
 % exp2 version of equation
 fo = fitoptions('Method','NonlinearLeastSquares','Lower', [0, -Inf, 0, -Inf], 'Upper', [Inf, 0, Inf, 0]);
 ft3 = fittype("a*exp(b*x) + c*exp(d*x)", 'options', fo);
 [fit3, gof3] = fit(t_fit(:), dep_diff_fit(:), ft3); 
 coeffs3 = coeffvalues(fit3);
-yfit3 = pulse_size * (coeffs3(1) * exp(coeffs3(2) * annual_t) + coeffs3(3) * exp(coeffs3(4) * annual_t)); 
+yfit3 = pulse_size_T * (coeffs3(1) * exp(coeffs3(2) * annual_t) + coeffs3(3) * exp(coeffs3(4) * annual_t)); 
 strfit3 = "fit v2: R^2 = " + sprintf('%0.3f',gof3.rsquare);
 streq3 = sprintf('%0.2f',coeffs3(1)) + "exp(" + sprintf('%0.2f',coeffs3(2)) ...
     + "t) + " + sprintf('%0.2f',coeffs3(3)) + "exp(" + ...
@@ -154,14 +166,14 @@ emiss_diff = pulse_diff(2,:) * (k_Te_rf + k_Te_p + k_Te_BBf) + ... % fast ter
 emiss_diff_o = pulse_diff(5,:) * (k_Oc_ev); % ocean contribution
 emiss_diff_l = emiss_diff - emiss_diff_o; % land contribution
 % take data starting in year following pulse for making fit
-emiss_diff_fit = emiss_diff(indx_fit_start:indx_fit_end) / pulse_size; % normalize by pulse size
+emiss_diff_fit = emiss_diff(indx_fit_start:indx_fit_end) / pulse_size_T; % normalize by pulse size
 
 % exp1 version of equation
 fo = fitoptions('Method','NonlinearLeastSquares','Lower', [0, -Inf], 'Upper', [Inf, 0]);
 ft_e1 = fittype("a*exp(b*x)", 'options', fo);
 [fit_e1, gof_e1] = fit(t_fit(:), emiss_diff_fit(:), ft_e1); 
 coeffs_e1 = coeffvalues(fit_e1);
-yfit_e1 = pulse_size * (coeffs_e1(1) * exp(coeffs_e1(2) * annual_t)); 
+yfit_e1 = pulse_size_T * (coeffs_e1(1) * exp(coeffs_e1(2) * annual_t)); 
 strfit_e1 = "fit exp1: R^2 = " + sprintf('%0.3f',gof_e1.rsquare);
 streq_e1 = sprintf('%0.2f',coeffs_e1(1)) + "exp(" + sprintf('%0.2f',coeffs_e1(2)) ...
     + "t)";
@@ -171,7 +183,7 @@ fo = fitoptions('Method','NonlinearLeastSquares','Lower', [0, -Inf, 0, -Inf], 'U
 ft_e2 = fittype("a*exp(b*x) + c*exp(d*x)", 'options', fo);
 [fit_e2, gof_e2] = fit(t_fit(:), emiss_diff_fit(:), ft_e2); 
 coeffs_e2 = coeffvalues(fit_e2);
-yfit_e2 = pulse_size * (coeffs_e2(1) * exp(coeffs_e2(2) * annual_t) + coeffs_e2(3) * exp(coeffs_e2(4) * annual_t)); 
+yfit_e2 = pulse_size_T * (coeffs_e2(1) * exp(coeffs_e2(2) * annual_t) + coeffs_e2(3) * exp(coeffs_e2(4) * annual_t)); 
 strfit_e2 = "fit v2: R^2 = " + sprintf('%0.3f',gof_e2.rsquare);
 streq_e2 = sprintf('%0.2f',coeffs_e2(1)) + "exp(" + sprintf('%0.2f',coeffs_e2(2)) ...
     + "t) + " + sprintf('%0.2f',coeffs_e2(3)) + "exp(" + ...
@@ -182,7 +194,7 @@ ft_e2_v1 = fittype("a*exp(b*x) + c*(1-exp(d*x))", 'options', fo);
 [fit_e2_v1, gof_e2_v1] = fit(t_fit(:), emiss_diff_fit(:), ft_e2_v1); 
 coeffs_e2_v1 = coeffvalues(fit_e2_v1);
 % calculate annual values from fit, accounting for pulse size
-yfit_e2_v1 = pulse_size * (coeffs_e2_v1(1) * exp(coeffs_e2_v1(2) * annual_t) + coeffs_e2_v1(3) * (1 - exp(coeffs_e2_v1(4) * annual_t))); 
+yfit_e2_v1 = pulse_size_T * (coeffs_e2_v1(1) * exp(coeffs_e2_v1(2) * annual_t) + coeffs_e2_v1(3) * (1 - exp(coeffs_e2_v1(4) * annual_t))); 
 strfit_e2_v1 = "fit v1: R^2 = " + sprintf('%0.3f',gof1.rsquare);
 streq_e2_v1 = sprintf('%0.2f',coeffs_e2_v1(1)) + "exp(" + sprintf('%0.2f',coeffs_e2_v1(2)) ...
     + "t) + " + sprintf('%0.2f',coeffs_e2_v1(3)) + "(1-exp(" + ...

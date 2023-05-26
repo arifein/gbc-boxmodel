@@ -147,13 +147,16 @@ if (strcmp(emissInven, 'Pulse'))
     
     % Run steady scenario
     Anthro = Anthro_steady;
+    river_pulse = 0;
     % figure counter
     ff = 0;
     forWeb_RunPulse
+
     M_steady = M; % save reservoirs
 
     % Run pulse scenario    
     Anthro = Anthro_pulse;
+    river_pulse = 100;
     forWeb_RunPulse
     M_pulse = M; % save reservoirs
     
@@ -166,5 +169,3 @@ else
     % Run with all-time anthropogenic emissions                     
     forWeb_RunAnthro
 end
-% IS IT DIFFERENT A PULSE IN PRE-INDUSTRIAL VS. CURRENT DAY? IS OCEAN A NET
-% SINK OF HG0 IN PREINDUSTRIAL AND A SOURCE NOW?
